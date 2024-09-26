@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-white text-black">
       <div className="container mx-auto px-4 py-12">
-        <Separator className="my-8 bg-gray-800" />
+        <Separator className="my-8 bg-gray-400" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Logo and company info */}
           <div className="space-y-4">
@@ -47,7 +47,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <Separator className="my-8 bg-gray-800" />
+        <Separator className="my-8 bg-gray-400" />
       </div>
     </footer>
   )

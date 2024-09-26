@@ -1,9 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
 import { MultiSelect } from './components/ui/multi-select'
+import Footer from "./components/ui/footer"
 import TeacherComp from "./mainPage/teachercomp"
 import axios from "axios"
 
@@ -41,11 +43,10 @@ export default function App() {
   const [subjectFilter, setSubjectFilter] = useState("all")
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedProfileDepartment, setSelectedProfileDepartment] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [sideOpen, setSideOpen] = useState(false);
-
 
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get(
@@ -112,7 +113,8 @@ export default function App() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98">&lt;SHS Platform/&gt; Schüler helfen Schüler</h1>
+        <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 hidden md:block">&lt;SHS Platform /&gt; Schüler helfen Schüler</h1>
+        <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
         <div className="flex space-x-2">
           <Sheet open={sideOpen}>
             <Button>
@@ -143,9 +145,9 @@ export default function App() {
                     Abteilung
                   </Label>
                   <Select 
-                    value={selectedOption} 
+                    value={selectedProfileDepartment} 
                     onValueChange={(value) => {
-                        setSelectedOption(value);
+                        setSelectedProfileDepartment(value);
                       }}
                     >
                     <SelectTrigger className="col-span-3">
@@ -168,7 +170,7 @@ export default function App() {
                   <Label htmlFor="subjects" className="text-right">
                     Fächer
                   </Label>
-                  <MultiSelect department={ selectedOption }/>
+                  <MultiSelect department= { selectedProfileDepartment }/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right">
@@ -243,13 +245,14 @@ export default function App() {
           </div>
       </div>
 
-      <hr className="border-t border-gray-300 my-8" />
+      <Separator className="my-8 bg-gray-400" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredTeachers.map(teacher => (
           <TeacherComp key={teacher.id} prop={teacher}/>
         ))}
       </div>
+      <Footer />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
+import { MultiSelect } from './components/ui/multi-select'
 import TeacherComp from "./mainPage/teachercomp"
 
 import {
@@ -24,7 +25,6 @@ import {
   SheetTrigger,
   SheetFooter,
   SheetClose
-
 } from "@/components/ui/sheet"
 
 interface Teacher {
@@ -40,6 +40,7 @@ export default function App() {
   const [subjectFilter, setSubjectFilter] = useState("all")
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
+  const [selectedOption, setSelectedOption] = useState('');
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -120,7 +121,12 @@ export default function App() {
                   <Label htmlFor="department" className="text-right">
                     Abteilung
                   </Label>
-                  <Select>
+                  <Select 
+                    value={selectedOption} 
+                    onValueChange={(value) => {
+                        setSelectedOption(value);
+                      }}
+                    >
                     <SelectTrigger className="col-span-3">
                       <SelectValue placeholder="Wähle deine Abteilung" />
                     </SelectTrigger>
@@ -141,22 +147,7 @@ export default function App() {
                   <Label htmlFor="subjects" className="text-right">
                     Fächer
                   </Label>
-                  <Select>
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Select your subjects" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Fächer</SelectLabel>
-                        <SelectItem value="am">AM</SelectItem>
-                        <SelectItem value="mtrs">MTRS</SelectItem>
-                        <SelectItem value="dic">DIC</SelectItem>
-                        <SelectItem value="hwe">HWE</SelectItem>
-                        <SelectItem value="fsst">FSST</SelectItem>
-                        <SelectItem value="d">D</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <MultiSelect department= { selectedOption }/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right">

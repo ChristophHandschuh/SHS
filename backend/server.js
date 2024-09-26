@@ -98,9 +98,8 @@ function ensureAuthenticated(req, res, next) {
 }
 
 // Apply ensureAuthenticated middleware to protected routes
-app.get('/teachers', ensureAuthenticated, (req, res) => {
+app.get('/teachers', (req, res) => {
   // Now you can access user info via req.user
-  console.log(`Request made by user: ${req.user.displayName}`);
   
   db.all('SELECT * FROM teachers', [], (err, rows) => {
     if (err) {

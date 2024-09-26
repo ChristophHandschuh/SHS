@@ -112,7 +112,7 @@ export function MultiSelect({ department }: MultiSelectProps) {
       <PopoverContent className="col-span-3 p-0">
         <Command>
           <CommandInput placeholder="Fach suchen..." />
-          <CommandEmpty>Fach nicht gefunden</CommandEmpty>
+          <CommandEmpty>Kein Fach gefunden</CommandEmpty>
           <CommandList>
             <CommandGroup>
               <CommandList>

@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
 import { MultiSelect } from './components/ui/multi-select'
+import Footer from "./components/ui/footer"
 import TeacherComp from "./mainPage/teachercomp"
 
 import {
@@ -229,6 +230,7 @@ export default function App() {
           <TeacherComp key={teacher.id} prop={teacher}/>
         ))}
       </div>
+      <Footer />
     </div>
   )
 }

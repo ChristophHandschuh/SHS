@@ -25,10 +25,11 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetFooter,
   SheetClose
 } from "@/components/ui/sheet"
+
+import { departments } from "./mainPage/data"
 
 interface Teacher {
     id: number;
@@ -39,13 +40,20 @@ interface Teacher {
     image: string;
 }
 
+interface newTeacher {
+  name: string;
+  className: string;
+  department: string;
+  subjects: string[];  // This is a string representation of an array
+  image: string;
+}
+
 export default function App() {
   const [subjectFilter, setSubjectFilter] = useState("all")
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
   const [selectedProfileDepartment, setSelectedProfileDepartment] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<newTeacher>({name: "", className: "", department: "", subjects: "", image: ""});
   const [sideOpen, setSideOpen] = useState(false);
 
   useEffect(() => {
@@ -60,8 +68,10 @@ export default function App() {
     })
     .then((res) => {
       console.log(res.data);
-      setUser(res.data);
-      setLoggedIn(true);
+      setUser(prevUser => ({
+        ...prevUser,
+        name: res.data["login"]
+      }));
       setSideOpen(true);
     })
     .catch((error) => {
@@ -75,6 +85,7 @@ export default function App() {
           throw new Error('Failed to fetch teachers')
         }
         const data: Teacher[] = await response.json()
+        console.log(data);
         // Parse the subjects string into an actual array for each teacher
         const parsedTeachers = data.map(teacher => ({
           ...teacher,
@@ -111,13 +122,37 @@ export default function App() {
     (departmentFilter === "all" || teacher.department === departmentFilter)
   )
 
+  const handleSave = async () => {
+    const formData = new FormData();
+    formData.append('name', user.name);
+    formData.append('className', user.className);
+    formData.append('department', departments[user.department as keyof typeof departments]);
+    formData.append('subjects', JSON.stringify(user.subjects));
+    if (user.image) {
+      const response = await fetch(user.image);
+      const blob = await response.blob();
+      formData.append('image', blob, 'profile.jpg');
+    }
+
+    try {
+      const response = await axios.post('http://localhost:3000/addteacher', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('User saved successfully:', response.data);
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 hidden md:block">&lt;SHS Platform /&gt; Schüler helfen Schüler</h1>
         <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
         <div className="flex space-x-2">
-          <Sheet open={sideOpen}>
+          <Sheet open={sideOpen} onOpenChange={setSideOpen}>
             <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:8080/oauth/redirect'}>
               <User className="h-4 w-4" />
             </Button>
@@ -133,13 +168,13 @@ export default function App() {
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input id="name" value={user && 'login' in user ? user["login"] : 'Benutzername'} className="col-span-3" />
+                  <Input id="name" onChange={(e) => setUser(prevUser => ({ ...prevUser, name: e.target.value }))} value={user?.name ?? ''} placeholder="Name" className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="class" className="text-right">
                     Klasse
                   </Label>
-                  <Input id="class" placeholder="1AHEL" className="col-span-3" />
+                  <Input id="class" onChange={(e) => setUser(prevUser => ({ ...prevUser, className: e.target.value }))} placeholder="1AHEL" className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="department" className="text-right">
@@ -149,6 +184,7 @@ export default function App() {
                     value={selectedProfileDepartment} 
                     onValueChange={(value) => {
                         setSelectedProfileDepartment(value);
+                        setUser(prevUser => ({ ...prevUser, department: value }));
                       }}
                     >
                     <SelectTrigger className="col-span-3">
@@ -171,17 +207,29 @@ export default function App() {
                   <Label htmlFor="subjects" className="text-right">
                     Fächer
                   </Label>
-                  <MultiSelect department= { selectedProfileDepartment }/>
+                  <MultiSelect department={ selectedProfileDepartment } setUser={setUser}/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right">
                     Profilbild
                   </Label>
-                  <Input id="image" type="file" className="col-span-3" />
+                  <Input id="image" type="file" className="col-span-3" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setUser(prevUser => ({ ...prevUser, image: reader.result as string }));
+                        };
+                        reader.readAsDataURL(file);
+                        console.log(user);
+                      }
+                    }} 
+                  />
                 </div>
               </div>
               <SheetFooter>
-                <SheetClose asChild>
+                <SheetClose asChild onClick={handleSave}>
                   <Button type="submit">Save</Button>
                 </SheetClose>
               </SheetFooter>

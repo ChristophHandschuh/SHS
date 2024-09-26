@@ -106,3 +106,68 @@ export const departmentColors: { [key: string]: string } = {
     "Elektronik": "bg-yellow-200",
     "Informationstechnologie": "bg-orange-200"
 }
+
+type Subject = {
+    value: string
+    label: string
+}
+
+type DepartmentSubjects = {
+    [key: string]: Subject[]
+}
+
+export const departmentSubjects: DepartmentSubjects = {
+    el: [
+        { value: "AM", label: "AM" },
+        { value: "HWE", label: "HWE" },
+        { value: "KSN", label: "KSN" },
+        { value: "D", label: "D" },
+        { value: "DIC", label: "DIC" },
+    ],
+    et: [
+        { value: "calculus", label: "Calculus" },
+        { value: "algebra", label: "Algebra" },
+        { value: "statistics", label: "Statistics" },
+        { value: "discreteMath", label: "Discrete Mathematics" },
+        { value: "linearAlgebra", label: "Linear Algebra" },
+    ],
+    mb: [
+        { value: "SYT", label: "SYT" },
+        { value: "NW", label: "NW" },
+        { value: "E", label: "E" },
+        { value: "IT", label: "Quantum Physics" },
+        { value: "GGP", label: "GGP" },
+    ],
+    it: [
+        { value: "SYT", label: "SYT" },
+        { value: "NW", label: "NW" },
+        { value: "E", label: "E" },
+        { value: "IT", label: "IT" },
+        { value: "GGP", label: "GGP" },
+    ],
+    me: [
+        { value: "SYT", label: "SYT" },
+        { value: "NW", label: "NW" },
+        { value: "E", label: "E" },
+        { value: "IT", label: "Quantum Physics" },
+        { value: "GGP", label: "GGP" },
+    ],
+    wi: [
+        { value: "SYT", label: "SYT" },
+        { value: "NW", label: "NW" },
+        { value: "E", label: "E" },
+        { value: "IT", label: "Quantum Physics" },
+        { value: "GGP", label: "GGP" },
+    ],
+}
+
+
+
+export const departments = {
+    "el":"Elektronik",
+    "it":"Informationstechnologie",
+    "mb":"Maschinenbau",
+    "me":"Mechatronik",
+    "et":"Elektrotechnik",
+    "wi":"Wirtschaftsingenieure"
+}

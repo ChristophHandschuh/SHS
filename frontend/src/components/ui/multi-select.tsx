@@ -16,66 +16,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { departmentSubjects } from "@/mainPage/data"
 
-type Subject = {
-  value: string
-  label: string
-}
 
-type DepartmentSubjects = {
-  [key: string]: Subject[]
-}
-
-const departmentSubjects: DepartmentSubjects = {
-  el: [
-    { value: "AM", label: "AM" },
-    { value: "HWE", label: "HWE" },
-    { value: "KSN", label: "KSN" },
-    { value: "D", label: "D" },
-    { value: "DIC", label: "DIC" },
-  ],
-  et: [
-    { value: "calculus", label: "Calculus" },
-    { value: "algebra", label: "Algebra" },
-    { value: "statistics", label: "Statistics" },
-    { value: "discreteMath", label: "Discrete Mathematics" },
-    { value: "linearAlgebra", label: "Linear Algebra" },
-  ],
-  mb: [
-    { value: "SYT", label: "SYT" },
-    { value: "NW", label: "NW" },
-    { value: "E", label: "E" },
-    { value: "IT", label: "Quantum Physics" },
-    { value: "GGP", label: "GGP" },
-  ],
-  it: [
-    { value: "SYT", label: "SYT" },
-    { value: "NW", label: "NW" },
-    { value: "E", label: "E" },
-    { value: "IT", label: "IT" },
-    { value: "GGP", label: "GGP" },
-  ],
-  me: [
-    { value: "SYT", label: "SYT" },
-    { value: "NW", label: "NW" },
-    { value: "E", label: "E" },
-    { value: "IT", label: "Quantum Physics" },
-    { value: "GGP", label: "GGP" },
-  ],
-  wi: [
-    { value: "SYT", label: "SYT" },
-    { value: "NW", label: "NW" },
-    { value: "E", label: "E" },
-    { value: "IT", label: "Quantum Physics" },
-    { value: "GGP", label: "GGP" },
-  ],
+interface newTeacher {
+  name: string;
+  className: string;
+  department: string;
+  subjects: string[]; // Ensure subjects is an array of strings
+  image: string;
 }
 
 interface MultiSelectProps {
   department: keyof typeof departmentSubjects
+  setUser: React.Dispatch<React.SetStateAction<newTeacher>>
 }
 
-export function MultiSelect({ department }: MultiSelectProps) {
+export function MultiSelect({ department, setUser }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState<string[]>([])
 
@@ -85,8 +42,10 @@ export function MultiSelect({ department }: MultiSelectProps) {
     if (value.includes(val)) {
         value.splice(value.indexOf(val), 1);
         setValue(value.filter((item) => item !== val));
+        setUser(prevUser => ({ ...prevUser, subjects: value.filter((item) => item !== val )}));
     } else {
         setValue(prevValue => [...prevValue, val]);
+        setUser(prevUser => ({ ...prevUser, subjects: [...prevUser.subjects, val]}));
     }
   }
 

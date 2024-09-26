@@ -29,7 +29,7 @@ const TeacherComp: React.FC<Props> = ({ prop }): JSX.Element => {
                 />
                 </div>
                 <h2 className="text-xl font-bold mb-1 text-center">{prop.name}</h2>
-                <p className="text-gray-600 mb-2">Class: {prop.className}</p>
+                <p className="text-gray-600 mb-2">Klasse: {prop.className}</p>
                 <Badge className={`${departmentColors[prop.department]} text-gray-800 mb-2`}>
                 {prop.department}
                 </Badge>

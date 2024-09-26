@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
 import { MultiSelect } from './components/ui/multi-select'
 import TeacherComp from "./mainPage/teachercomp"
+import axios from "axios"
 
 import {
   Select,
@@ -41,8 +42,30 @@ export default function App() {
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
   const [selectedOption, setSelectedOption] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [sideOpen, setSideOpen] = useState(false);
+
 
   useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get(
+      "access_token"
+    );
+
+    axios.get("https://api.github.com/user", {
+      headers: {
+        Authorization: "token " + token,
+      },
+    })
+    .then((res) => {
+      console.log(res.data);
+      setUser(res.data);
+      setLoggedIn(true);
+    })
+    .catch((error) => {
+      console.log("error " + error);
+    });
+
     const fetchTeachers = async () => {
       try {
         const response = await fetch('http://localhost:3000/teachers')
@@ -91,12 +114,10 @@ export default function App() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98">&lt;SHS Platform/&gt; Schüler helfen Schüler</h1>
         <div className="flex space-x-2">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button>
-                <User className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
+          <Sheet open={sideOpen}>
+            <Button>
+              <User className="h-4 w-4" />
+            </Button>
             <SheetContent className="bg-white">
               <SheetHeader>
                 <SheetTitle>Dein Profil</SheetTitle>
@@ -147,7 +168,7 @@ export default function App() {
                   <Label htmlFor="subjects" className="text-right">
                     Fächer
                   </Label>
-                  <MultiSelect department= { selectedOption }/>
+                  <MultiSelect department={ selectedOption }/>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right">

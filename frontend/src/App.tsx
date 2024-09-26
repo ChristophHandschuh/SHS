@@ -62,6 +62,7 @@ export default function App() {
       console.log(res.data);
       setUser(res.data);
       setLoggedIn(true);
+      setSideOpen(true);
     })
     .catch((error) => {
       console.log("error " + error);
@@ -117,7 +118,7 @@ export default function App() {
         <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
         <div className="flex space-x-2">
           <Sheet open={sideOpen}>
-            <Button>
+            <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:8080/oauth/redirect'}>
               <User className="h-4 w-4" />
             </Button>
             <SheetContent className="bg-white">
@@ -132,7 +133,7 @@ export default function App() {
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input id="name" placeholder="Max Mustermann" className="col-span-3" />
+                  <Input id="name" placeholder={user["login"]} className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="class" className="text-right">

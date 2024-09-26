@@ -133,7 +133,7 @@ export default function App() {
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input id="name" placeholder={user["login"]} className="col-span-3" />
+                  <Input id="name" value={user && 'login' in user ? user["login"] : 'Benutzername'} className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="class" className="text-right">

@@ -163,11 +163,20 @@ export const departmentSubjects: DepartmentSubjects = {
 
 
 
-export const departments = {
+export const departmentKeys = {
     "el":"Elektronik",
     "it":"Informationstechnologie",
     "mb":"Maschinenbau",
     "me":"Mechatronik",
     "et":"Elektrotechnik",
     "wi":"Wirtschaftsingenieure"
+}
+
+export const departmentNames = {
+    "Elektronik":"el",
+    "Informationstechnologie":"it",
+    "Maschinenbau":"mb",
+    "Mechatronik":"me",
+    "Elektrotechnik":"et",
+    "Wirtschaftsingenieure":"wi"
 }

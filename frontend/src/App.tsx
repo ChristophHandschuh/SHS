@@ -29,23 +29,17 @@ import {
   SheetClose
 } from "@/components/ui/sheet"
 
-import { departments } from "./mainPage/data"
+import { departmentKeys } from "./mainPage/data"
+import { departmentNames } from "./mainPage/data"
 
 interface Teacher {
     id: number;
     name: string;
     className: string;
     department: string;
-    subjects: string;  // This is a string representation of an array
-    image: string;
-}
-
-interface newTeacher {
-  name: string;
-  className: string;
-  department: string;
-  subjects: string[];  // This is a string representation of an array
-  image: string;
+    subjects: string | string[];  // This is a string representation of an array
+    newImage: string;
+    oldImage: string;
 }
 
 export default function App() {
@@ -53,7 +47,7 @@ export default function App() {
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
   const [selectedProfileDepartment, setSelectedProfileDepartment] = useState('');
-  const [user, setUser] = useState<newTeacher>({name: "", className: "", department: "", subjects: "", image: ""});
+  const [user, setUser] = useState<Teacher>({id: 0,name: "", className: "", department: "", subjects: "", image: ""});
   const [sideOpen, setSideOpen] = useState(false);
 
   useEffect(() => {
@@ -66,12 +60,33 @@ export default function App() {
         Authorization: "token " + token,
       },
     })
-    .then((res) => {
-      console.log(res.data);
-      setUser(prevUser => ({
-        ...prevUser,
-        name: res.data["login"]
-      }));
+    .then((resOauth) => {
+      console.log(resOauth.data);
+      axios.get("http://localhost:3000/getteacher?id="+resOauth.data["id"])
+      .then((res) => {
+        console.log(res.data);
+        if(res.data.length > 0){
+          setUser(prevUser => ({
+            ...prevUser,
+            name: res.data["name"],
+            id: res.data["id"],
+            className: res.data["className"],
+            department: res.data["department"],
+            subjects: JSON.parse(res.data["subjects"].replace(/'/g, '"')),
+            oldImage: res.data["image"]
+          }));
+          setSelectedProfileDepartment(departmentNames[res.data["department"] as keyof typeof departmentNames]);
+        }else{
+          setUser(prevUser => ({
+            ...prevUser,
+            name: resOauth.data["name"]
+          }));
+        }
+      })
+      .catch((error) => {
+        console.log("error " + error);
+      });
+
       setSideOpen(true);
     })
     .catch((error) => {
@@ -124,12 +139,13 @@ export default function App() {
 
   const handleSave = async () => {
     const formData = new FormData();
+    formData.append('id', user.id.toString());
     formData.append('name', user.name);
     formData.append('className', user.className);
-    formData.append('department', departments[user.department as keyof typeof departments]);
+    formData.append('department', departmentKeys[user.department as keyof typeof departmentKeys]);
     formData.append('subjects', JSON.stringify(user.subjects));
-    if (user.image) {
-      const response = await fetch(user.image);
+    if (user.newImage) {
+      const response = await fetch(user.newImage);
       const blob = await response.blob();
       formData.append('image', blob, 'profile.jpg');
     }
@@ -174,7 +190,7 @@ export default function App() {
                   <Label htmlFor="class" className="text-right">
                     Klasse
                   </Label>
-                  <Input id="class" onChange={(e) => setUser(prevUser => ({ ...prevUser, className: e.target.value }))} placeholder="1AHEL" className="col-span-3" />
+                  <Input id="class" onChange={(e) => setUser(prevUser => ({ ...prevUser, className: e.target.value }))} value={user?.className ?? ''}placeholder="1AHEL" className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="department" className="text-right">
@@ -207,7 +223,10 @@ export default function App() {
                   <Label htmlFor="subjects" className="text-right">
                     Fächer
                   </Label>
-                  <MultiSelect department={ selectedProfileDepartment } setUser={setUser}/>
+                  <MultiSelect department={ selectedProfileDepartment } setUser={setUser} User={user}/>
+                </div>
+                <div className='flex justify-center'>
+                  {user.oldImage && <img src={user.oldImage} alt="Old Profile" className="w-32 h-32 object-cover rounded-full" />}
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right">
@@ -219,7 +238,7 @@ export default function App() {
                       if (file) {
                         const reader = new FileReader();
                         reader.onloadend = () => {
-                          setUser(prevUser => ({ ...prevUser, image: reader.result as string }));
+                          setUser(prevUser => ({ ...prevUser, newImage: reader.result as string }));
                         };
                         reader.readAsDataURL(file);
                         console.log(user);

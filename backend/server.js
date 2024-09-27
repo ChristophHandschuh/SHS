@@ -7,13 +7,11 @@ const fs = require('fs');
 const cors = require('cors');
 const axios = require("axios");
 
-
 const app = express();
 const port = 3000;
 const CLIENT_ID = "Ov23liRc1COTIDe523zr";
 const CLIENT_SECRET = "4bd298031b5a67e491240134b8b28c8d852ae166";
 const GITHUB_URL = "https://github.com/login/oauth/access_token";
-
 
 // Middleware
 app.use(bodyParser.json());
@@ -43,7 +41,7 @@ const db = new sqlite3.Database('./teachers.db', (err) => {
   } else {
     console.log('Connected to the SQLite database.');
     db.run(`CREATE TABLE IF NOT EXISTS teachers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,
       className TEXT NOT NULL,
       department TEXT NOT NULL,
@@ -65,31 +63,84 @@ app.get('/teachers', (req, res) => {
       ...teacher,
       image: teacher.image ? `http://localhost:${port}/${teacher.image}` : null
     }));
+    console.log(teachersWithImageUrls);
     res.json(teachersWithImageUrls);
+  });
+});
+
+// Updated route to get teachers info
+app.get('/getteacher', (req, res) => {
+  db.all('SELECT * FROM teachers WHERE id = ?', [req.query.id], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    // Transform the image path to a full URL
+    const teachersWithImageUrls = rows.map(teacher => ({
+      ...teacher,
+      image: teacher.image ? `http://localhost:${port}/${teacher.image}` : null
+    }));
+    res.json(teachersWithImageUrls[0] || []);
   });
 });
 
 // POST / route to add a teacher
 app.post('/addteacher', upload.single('image'), (req, res) => {
-  const { name, className, department, subjects } = req.body;
+  const { id, name, className, department, subjects } = req.body;
   const image = req.file ? req.file.path : null;
   
-  if (!name || !className || !department || !subjects) {
+  if (!id || !name || !className || !department || !subjects) {
     res.status(400).json({ error: "Missing required fields" });
     return;
   }
 
-  const sql = `INSERT INTO teachers (name, className, department, subjects, image) VALUES (?, ?, ?, ?, ?)`;
-  
-  db.run(sql, [name, className, department, subjects, image], function(err) {
+  // Check if the ID already exists
+  db.get('SELECT id FROM teachers WHERE id = ?', [id], (err, row) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({
-      message: "Teachers added successfully",
-      id: this.lastID
-    });
+
+    if (row) {
+      if(image){
+        const updateSql = `UPDATE teachers SET name = ?, className = ?, department = ?, subjects = ?, image = ? WHERE id = ?`;
+        db.run(updateSql, [name, className, department, subjects, image, id], function(err) {
+          if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+          }
+          res.json({
+            message: "Teacher updated successfully",
+            id: id
+          });
+        });
+      }
+      else{
+        const updateSql = `UPDATE teachers SET name = ?, className = ?, department = ?, subjects = ? WHERE id = ?`;
+        db.run(updateSql, [name, className, department, subjects, id], function(err) {
+          if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+          }
+          res.json({
+            message: "Teacher updated successfully",
+            id: id
+          });
+        });
+      }
+    } else {
+      const insertSql = `INSERT INTO teachers (id, name, className, department, subjects, image) VALUES (?, ?, ?, ?, ?, ?)`;
+      db.run(insertSql, [id, name, className, department, subjects, image], function(err) {
+        if (err) {
+          res.status(500).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: "Teacher added successfully",
+          id: this.lastID
+        });
+      });
+    }
   });
 });
 

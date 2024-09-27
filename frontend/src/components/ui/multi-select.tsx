@@ -19,7 +19,7 @@ import {
 import { departmentSubjects } from "@/mainPage/data"
 
 
-interface newTeacher {
+interface Teacher {
   name: string;
   className: string;
   department: string;
@@ -29,12 +29,13 @@ interface newTeacher {
 
 interface MultiSelectProps {
   department: keyof typeof departmentSubjects
-  setUser: React.Dispatch<React.SetStateAction<newTeacher>>
+  setUser: React.Dispatch<React.SetStateAction<Teacher>>
+  User: Teacher
 }
 
-export function MultiSelect({ department, setUser }: MultiSelectProps) {
+export function MultiSelect({ department, setUser, User }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState<string[]>([])
+  const [value, setValue] = React.useState<string[]>(User.subjects || [])
 
   const subjects = departmentSubjects[department] || []
 
@@ -59,8 +60,8 @@ export function MultiSelect({ department, setUser }: MultiSelectProps) {
         className="col-span-3 justify-between h-auto min-h-[2.5rem] py-2"
       >
         <div className="flex flex-wrap gap-2 justify-start items-center">
-            {value?.length ?
-                value.map((val, i) => (
+            {User.subjects?.length ?
+                User.subjects.map((val, i) => (
                     <div key={i} className="px-2 py-1 rounded-xl border bg-slate-200 text-xs font-medium">{subjects.find((subject) => subject.value === val)?.label}</div>
                 ))
                 : "Wähle deine Fächer"}

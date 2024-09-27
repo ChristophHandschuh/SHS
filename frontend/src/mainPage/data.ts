@@ -103,8 +103,8 @@ export const departmentColors: { [key: string]: string } = {
     "Physical Education": "bg-red-200",
     "Technology": "bg-purple-200",
     "Languages": "bg-pink-200",
-    "Elektronik": "bg-yellow-200",
-    "Informationstechnologie": "bg-orange-200"
+    "el": "bg-yellow-200",
+    "it": "bg-orange-200"
 }
 
 type Subject = {
@@ -170,13 +170,4 @@ export const departmentKeys = {
     "me":"Mechatronik",
     "et":"Elektrotechnik",
     "wi":"Wirtschaftsingenieure"
-}
-
-export const departmentNames = {
-    "Elektronik":"el",
-    "Informationstechnologie":"it",
-    "Maschinenbau":"mb",
-    "Mechatronik":"me",
-    "Elektrotechnik":"et",
-    "Wirtschaftsingenieure":"wi"
 }

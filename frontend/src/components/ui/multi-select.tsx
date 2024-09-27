@@ -35,17 +35,14 @@ interface MultiSelectProps {
 
 export function MultiSelect({ department, setUser, User }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState<string[]>(User.subjects || [])
 
   const subjects = departmentSubjects[department] || []
 
   const handleSetValue = (val: string) => {
-    if (value.includes(val)) {
-        value.splice(value.indexOf(val), 1);
-        setValue(value.filter((item) => item !== val));
-        setUser(prevUser => ({ ...prevUser, subjects: value.filter((item) => item !== val )}));
+    if (User.subjects.includes(val)) {
+        User.subjects.splice(User.subjects.indexOf(val), 1);
+        setUser(prevUser => ({ ...prevUser, subjects: User.subjects.filter((item) => item !== val )}));
     } else {
-        setValue(prevValue => [...prevValue, val]);
         setUser(prevUser => ({ ...prevUser, subjects: [...prevUser.subjects, val]}));
     }
   }
@@ -87,7 +84,7 @@ export function MultiSelect({ department, setUser, User }: MultiSelectProps) {
                           <Check
                               className={cn(
                                   "mr-2 h-4 w-4",
-                                  value.includes(subject.value) ? "opacity-100" : "opacity-0"
+                                  User.subjects.includes(subject.value) ? "opacity-100" : "opacity-0"
                               )}
                           />
                           {subject.label}

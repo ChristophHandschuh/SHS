@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/sheet"
 
 import { departmentKeys } from "./mainPage/data"
-import { departmentNames } from "./mainPage/data"
 
 interface Teacher {
     id: number;
@@ -38,8 +37,17 @@ interface Teacher {
     className: string;
     department: string;
     subjects: string | string[];  // This is a string representation of an array
-    newImage: string;
-    oldImage: string;
+    image: string;
+}
+
+interface intfUser {
+  id: number;
+  name: string;
+  className: string;
+  department: string;
+  subjects: string | string[];  // This is a string representation of an array
+  newImage: string;
+  oldImage: string;
 }
 
 export default function App() {
@@ -47,7 +55,7 @@ export default function App() {
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
   const [selectedProfileDepartment, setSelectedProfileDepartment] = useState('');
-  const [user, setUser] = useState<Teacher>({id: 0,name: "", className: "", department: "", subjects: "", image: ""});
+  const [user, setUser] = useState<intfUser>({id: 0,name: "", className: "", department: "", subjects: "", image: ""});
   const [sideOpen, setSideOpen] = useState(false);
 
   useEffect(() => {
@@ -64,8 +72,8 @@ export default function App() {
       console.log(resOauth.data);
       axios.get("http://localhost:3000/getteacher?id="+resOauth.data["id"])
       .then((res) => {
-        console.log(res.data);
-        if(res.data.length > 0){
+        console.log("HIER DATEN:", res.data);
+        if('id'in res.data){
           setUser(prevUser => ({
             ...prevUser,
             name: res.data["name"],
@@ -75,11 +83,12 @@ export default function App() {
             subjects: JSON.parse(res.data["subjects"].replace(/'/g, '"')),
             oldImage: res.data["image"]
           }));
-          setSelectedProfileDepartment(departmentNames[res.data["department"] as keyof typeof departmentNames]);
+          setSelectedProfileDepartment(res.data["department"]);
         }else{
           setUser(prevUser => ({
             ...prevUser,
-            name: resOauth.data["name"]
+            name: resOauth.data["name"],
+            id: resOauth.data["id"]
           }));
         }
       })
@@ -104,7 +113,7 @@ export default function App() {
         // Parse the subjects string into an actual array for each teacher
         const parsedTeachers = data.map(teacher => ({
           ...teacher,
-          subjects: JSON.parse(teacher.subjects.replace(/'/g, '"'))
+          subjects: JSON.parse((teacher.subjects as string).replace(/'/g, '"'))
         }))
         setTeachers(parsedTeachers)
       } catch (error) {
@@ -142,8 +151,9 @@ export default function App() {
     formData.append('id', user.id.toString());
     formData.append('name', user.name);
     formData.append('className', user.className);
-    formData.append('department', departmentKeys[user.department as keyof typeof departmentKeys]);
+    formData.append('department', user.department);
     formData.append('subjects', JSON.stringify(user.subjects));
+    console.log(user.newImage);
     if (user.newImage) {
       const response = await fetch(user.newImage);
       const blob = await response.blob();
@@ -266,7 +276,7 @@ export default function App() {
               <SelectContent>
                 <SelectItem value="all">Alle Abteilungen</SelectItem>
                 {allDepartments.map(department => (
-                  <SelectItem key={department} value={department}>{department}</SelectItem>
+                  <SelectItem key={department} value={department}>{departmentKeys[department as keyof typeof departmentKeys]}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -293,7 +303,7 @@ export default function App() {
               <SelectContent>
                 <SelectItem value="all">Alle Abteilungen</SelectItem>
                 {allDepartments.map(department => (
-                  <SelectItem key={department} value={department}>{department}</SelectItem>
+                  <SelectItem key={department} value={department}>{departmentKeys[department as keyof typeof departmentKeys]}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

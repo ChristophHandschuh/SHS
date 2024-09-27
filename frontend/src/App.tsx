@@ -160,6 +160,7 @@ export default function App() {
     } catch (error) {
       console.error('Error saving user:', error);
     }
+    location.reload();
   };
 
   return (
@@ -171,6 +172,7 @@ export default function App() {
           <Sheet open={sideOpen} onOpenChange={setSideOpen}>
             <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:3000/oauth/redirect'}>
               <User className="h-4 w-4" />
+              <p className="text-white ml-2">Nachhilfe geben</p>
             </Button>
             <SheetContent className="bg-white">
               <SheetHeader>

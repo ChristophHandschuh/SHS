@@ -19,7 +19,7 @@ const TeacherComp: React.FC<Props> = ({ prop }): JSX.Element => {
     return(
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
             <div className="p-4 flex flex-col items-center">
-                <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
+                <div className="w-32 h-32 rounded-full overflow-hidden mb-4 mt-4">
                 <img
                     src={prop.image}
                     alt={prop.name}

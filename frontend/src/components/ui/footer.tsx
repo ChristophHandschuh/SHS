@@ -23,7 +23,7 @@ export default function Footer() {
               </svg>
               <span className="font-bold text-xl">SHS - Schüler helfen Schüler</span>
             <p className="text-sm text-gray-400">
-              Offiziele Nachhilfe Platform der HTL Hollabrunn. Entiwickelt von Schülern der Elektronik Abteilung
+              Offiziele Nachhilfe Platform der HTL Hollabrunn. Entwickelt von Schülern der Elektronik Abteilung
             </p>
           </div>
 
@@ -33,7 +33,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li className="flex items-center space-x-2">
                 <Mail size={16} />
-                <span>leonbinder.sw@gmail.com</span>
+                  <a href="mailto:shs.htlhl@gmail.com" className="text-blue-800">shs.htlhl@gmail.com</a>
               </li>
               <li className="flex items-center space-x-2">
                 <School size={16} />

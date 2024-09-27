@@ -5,24 +5,20 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const session = require('express-session');
+const axios = require("axios");
+
 
 const app = express();
 const port = 3000;
+const CLIENT_ID = "Ov23liRc1COTIDe523zr";
+const CLIENT_SECRET = "4bd298031b5a67e491240134b8b28c8d852ae166";
+const GITHUB_URL = "https://github.com/login/oauth/access_token";
+
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
-app.use(session({
-  secret: 'your_session_secret',
-  resave: false,
-  saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(cors({ credentials: true, origin: true }));
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static('uploads'));
@@ -57,50 +53,8 @@ const db = new sqlite3.Database('./teachers.db', (err) => {
   }
 });
 
-// Passport configuration
-passport.use(new GoogleStrategy({
-    clientID: 'Ov23liRc1COTIDe523zr',
-    clientSecret: '182f0d5f91aebd7da82e759f1fec353978ce1e9d',
-    callbackURL: "http://localhost:3000/auth/google/callback"
-  },
-  function(accessToken, refreshToken, profile, cb) {
-    // Here you would typically find or create a user in your database
-    // For this example, we'll just pass the profile information
-    return cb(null, profile);
-  }
-));
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
-
-// OAuth routes
-app.get('/auth/github',
-  passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-app.get('/auth/github/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
-
-// Middleware to check if user is authenticated
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ error: 'Not authenticated' });
-}
-
-// Apply ensureAuthenticated middleware to protected routes
+// Route to get all teachers
 app.get('/teachers', (req, res) => {
-  // Now you can access user info via req.user
-  
   db.all('SELECT * FROM teachers', [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -115,7 +69,7 @@ app.get('/teachers', (req, res) => {
   });
 });
 
-// POST / route to add a student
+// POST / route to add a teacher
 app.post('/addteacher', upload.single('image'), (req, res) => {
   const { name, className, department, subjects } = req.body;
   const image = req.file ? req.file.path : null;
@@ -139,20 +93,19 @@ app.post('/addteacher', upload.single('image'), (req, res) => {
   });
 });
 
-// Route to get current user's info
-app.get('/me', ensureAuthenticated, (req, res) => {
-  res.json({
-    id: req.user.id,
-    displayName: req.user.displayName,
-    email: req.user.emails[0].value
-    // Add any other user properties you want to expose
+app.get("/oauth/redirect", (req, res) => {
+  axios({
+    method: "POST",
+    url: `${GITHUB_URL}?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${req.query.code}`,
+    headers: {
+      Accept: "application/json",
+    },
+  }).then((response) => {
+    console.log(response.data);
+    res.redirect(
+      `http://localhost:5173?access_token=${response.data.access_token}`
+    );
   });
-});
-
-// Logout route
-app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
 });
 
 // Start the server

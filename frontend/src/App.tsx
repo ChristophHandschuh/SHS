@@ -153,7 +153,7 @@ export default function App() {
         <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
         <div className="flex space-x-2">
           <Sheet open={sideOpen} onOpenChange={setSideOpen}>
-            <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:8080/oauth/redirect'}>
+            <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:3000/oauth/redirect'}>
               <User className="h-4 w-4" />
             </Button>
             <SheetContent className="bg-white">

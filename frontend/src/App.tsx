@@ -55,8 +55,27 @@ export default function App() {
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [teachers, setTeachers] = useState<(Teacher & { subjects: string[] })[]>([])
   const [selectedProfileDepartment, setSelectedProfileDepartment] = useState('');
-  const [user, setUser] = useState<intfUser>({id: 0,name: "", className: "", department: "", subjects: "", image: ""});
+  const [user, setUser] = useState<intfUser>({id: 0,name: "", className: "", department: "", subjects: "", newImage: "", oldImage: ""});
   const [sideOpen, setSideOpen] = useState(false);
+
+  const fetchTeachers = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/teachers')
+      if (!response.ok) {
+        throw new Error('Failed to fetch teachers')
+      }
+      const data: Teacher[] = await response.json()
+      console.log(data);
+      // Parse the subjects string into an actual array for each teacher
+      const parsedTeachers = data.map(teacher => ({
+        ...teacher,
+        subjects: JSON.parse((teacher.subjects as string).replace(/'/g, '"'))
+      }))
+      setTeachers(parsedTeachers)
+    } catch (error) {
+      console.error('Error fetching teachers:', error)
+    }
+  }
 
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get(
@@ -91,35 +110,15 @@ export default function App() {
             id: resOauth.data["id"]
           }));
         }
+        setSideOpen(true);
       })
       .catch((error) => {
         console.log("error " + error);
       });
-
-      setSideOpen(true);
     })
     .catch((error) => {
       console.log("error " + error);
     });
-
-    const fetchTeachers = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/teachers')
-        if (!response.ok) {
-          throw new Error('Failed to fetch teachers')
-        }
-        const data: Teacher[] = await response.json()
-        console.log(data);
-        // Parse the subjects string into an actual array for each teacher
-        const parsedTeachers = data.map(teacher => ({
-          ...teacher,
-          subjects: JSON.parse((teacher.subjects as string).replace(/'/g, '"'))
-        }))
-        setTeachers(parsedTeachers)
-      } catch (error) {
-        console.error('Error fetching teachers:', error)
-      }
-    }
 
     fetchTeachers()
   }, [])
@@ -153,7 +152,7 @@ export default function App() {
     formData.append('className', user.className);
     formData.append('department', user.department);
     formData.append('subjects', JSON.stringify(user.subjects));
-    console.log(user.newImage);
+
     if (user.newImage) {
       const response = await fetch(user.newImage);
       const blob = await response.blob();
@@ -167,10 +166,10 @@ export default function App() {
         },
       });
       console.log('User saved successfully:', response.data);
+      fetchTeachers();
     } catch (error) {
       console.error('Error saving user:', error);
     }
-    location.reload();
   };
 
   return (

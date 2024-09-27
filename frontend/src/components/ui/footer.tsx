@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator"
-import {  Mail, Code, School, BookOpenText } from "lucide-react"
+import {  Mail, Code, School, BookOpenText, Code2 } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -38,10 +38,6 @@ export default function Footer() {
               <li className="flex items-center space-x-2">
                 <School size={16} />
                 <a href="https://www.htl-hl.ac.at/web/" className="text-blue-800">HTL Hollabrunn</a>
-              </li>
-              <li className="flex items-center space-x-2">
-                <Code size={16} />
-                <span>Christoph Handschuh, Leon Binder</span>
               </li>
             </ul>
           </div>

@@ -142,12 +142,12 @@ export const subjectColors: { [key: string]: string } = {
 
 // Color mapping for departments
 export const departmentColors: { [key: string]: string } = {
-    "Elektronik": "bg-yellow-300",
-    "Informationstechnologie": "bg-orange-600",
-    "Maschinenbau": "bg-green-800",
-    "Mechatronik": "bg-lime-400",
-    "Elektrotechnik": "bg-red-700",
-    "Wirtschaftsingenieure": "bg-blue-700",
+    "el": "bg-yellow-300",
+    "it": "bg-orange-600",
+    "mb": "bg-green-800",
+    "me": "bg-lime-400",
+    "et": "bg-red-700",
+    "wi": "bg-blue-700",
 }
 
 type Subject = {
@@ -279,13 +279,4 @@ export const departmentKeys = {
     "me":"Mechatronik",
     "et":"Elektrotechnik",
     "wi":"Wirtschaftsingenieure"
-}
-
-export const departmentNames = {
-    "Elektronik":"el",
-    "Informationstechnologie":"it",
-    "Maschinenbau":"mb",
-    "Mechatronik":"me",
-    "Elektrotechnik":"et",
-    "Wirtschaftsingenieure":"wi"
 }

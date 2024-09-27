@@ -39,6 +39,10 @@ export default function Footer() {
                 <School size={16} />
                 <a href="https://www.htl-hl.ac.at/web/" className="text-blue-800">HTL Hollabrunn</a>
               </li>
+              <li className="flex items-center space-x-2">
+                <Code size={16} />
+                <p>Christoph Handschuh, Leon Binder</p>
+              </li>
             </ul>
           </div>
         </div>

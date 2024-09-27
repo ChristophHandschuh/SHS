@@ -176,12 +176,12 @@ export default function App() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 hidden md:block">&lt;SHS Platform /&gt; Schüler helfen Schüler</h1>
-        <h1 className="text-4xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
+        <h1 className="text-3xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
         <div className="flex space-x-2">
           <Sheet open={sideOpen} onOpenChange={setSideOpen}>
             <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:3000/oauth/redirect'}>
               <User className="h-4 w-4" />
-              <p className="text-white ml-2">Nachhilfe geben</p>
+              <p className="text-white ml-2 hidden md:block">Nachhilfe geben</p>
             </Button>
             <SheetContent className="bg-white">
               <SheetHeader>

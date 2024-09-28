@@ -82,9 +82,11 @@ export default function App() {
       "access_token"
     );
 
-    axios.get("https://api.github.com/user", {
+    console.log("Bearer " + token);
+
+    axios.get("https://graph.microsoft.com/v1.0/me", {
       headers: {
-        Authorization: "token " + token,
+        Authorization: "Bearer " + token
       },
     })
     .then((resOauth) => {
@@ -179,7 +181,7 @@ export default function App() {
         <h1 className="text-3xl font-mono font-bold text-gray-900 tracking-tight w-98 md:hidden">&lt;SHS Platform /&gt;</h1>
         <div className="flex space-x-2">
           <Sheet open={sideOpen} onOpenChange={setSideOpen}>
-            <Button onClick={() => window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liRc1COTIDe523zr&redirect_uri=http://localhost:3000/oauth/redirect'}>
+            <Button onClick={() => window.location.href = 'https://login.microsoftonline.com/190dcb4f-6bec-43c6-b761-484429dbf536/oauth2/v2.0/authorize?response_type=code&client_id=fb51977a-b42a-4905-84a9-5df79cb0d3fb&scope=user.read&redirect_uri=http://localhost:3000/oauth/redirect'}>
               <User className="h-4 w-4" />
               <p className="text-white ml-2 hidden md:block">Nachhilfe geben</p>
             </Button>

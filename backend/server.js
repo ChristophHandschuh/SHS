@@ -9,9 +9,9 @@ const axios = require("axios");
 
 const app = express();
 const port = 3000;
-const CLIENT_ID = "Ov23liRc1COTIDe523zr";
-const CLIENT_SECRET = "4bd298031b5a67e491240134b8b28c8d852ae166";
-const GITHUB_URL = "https://github.com/login/oauth/access_token";
+const CLIENT_ID = "";
+const CLIENT_SECRET = "";
+const MICROSOFT_TOKEN_URL = "https://login.microsoftonline.com/190dcb4f-6bec-43c6-b761-484429dbf536/oauth2/v2.0/token";
 
 // Middleware
 app.use(bodyParser.json());
@@ -145,18 +145,31 @@ app.post('/addteacher', upload.single('image'), (req, res) => {
 });
 
 app.get("/oauth/redirect", (req, res) => {
-  axios({
-    method: "POST",
-    url: `${GITHUB_URL}?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${req.query.code}`,
-    headers: {
-      Accept: "application/json",
-    },
-  }).then((response) => {
-    console.log(response.data);
+  if(req.query.code){
+    axios({
+      method: "POST",
+      url: MICROSOFT_TOKEN_URL,
+      data: {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code: req.query.code,
+        grant_type: "authorization_code",
+        scope: "user.read",//"api://fb51977a-b42a-4905-84a9-5df79cb0d3fb/.default"
+        redirect_uri: "http://localhost:3000/oauth/redirect"
+      },
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    }).then((response) => {
+      console.log(response.data);
+      res.redirect(
+        `http://localhost:5173?access_token=${response.data.access_token}`
+      );
+    });
+  }
+  else{
     res.redirect(
-      `http://localhost:5173?access_token=${response.data.access_token}`
+      `http://localhost:5173?access_token=${req.query.access_token}`
     );
-  });
+  }
 });
 
 // Start the server

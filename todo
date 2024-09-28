@@ -1,0 +1,3 @@
+- .env für client id, client secret, tenant id
+- loggind in state, damit microsoft nicht wieder zurück geht
+- delete button

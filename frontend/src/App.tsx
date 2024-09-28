@@ -189,7 +189,8 @@ export default function App() {
               <SheetHeader>
                 <SheetTitle>Dein Profil</SheetTitle>
                 <SheetDescription>
-                  Hier kannst du dein Profil als Nachhilfelehrer ändern.
+                  Hier kannst du dein Profil als Nachhilfelehrer ändern. <br /> <br /> Mit dem speichern deines 
+                  Profils aktzeptierst du automatisch die Einsehbarkeit für alle SchülerInnen und Eltern.
                 </SheetDescription>
               </SheetHeader>
               <div className="grid gap-4 py-4">

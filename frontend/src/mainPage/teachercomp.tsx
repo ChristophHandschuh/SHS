@@ -17,16 +17,16 @@ interface Props {
 
 const TeacherComp: React.FC<Props> = ({ prop }): JSX.Element => {
     return(
-        <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
+        <div className="bg-white rounded-lg shadow-2xl overflow-hidden hover:bg-gray-200">
             <div className="p-4 flex flex-col items-center">
                 <div className="w-32 h-32 rounded-full overflow-hidden mb-4 mt-4">
-                <img
-                    src={prop.image}
-                    alt={prop.name}
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                />
+                    <img
+                        src={prop.image}
+                        alt={prop.name}
+                        width={128}
+                        height={128}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
                 <h2 className="text-xl font-bold mb-1 text-center">{prop.name}</h2>
                 <p className="text-gray-600 mb-2">Klasse: {prop.className}</p>

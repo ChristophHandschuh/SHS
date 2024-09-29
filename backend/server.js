@@ -6,11 +6,13 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 const axios = require("axios");
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 const port = 3000;
-const CLIENT_ID = "";
-const CLIENT_SECRET = "";
+const CLIENT_ID = "fb51977a-b42a-4905-84a9-5df79cb0d3fb";
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const MICROSOFT_TOKEN_URL = "https://login.microsoftonline.com/190dcb4f-6bec-43c6-b761-484429dbf536/oauth2/v2.0/token";
 
 // Middleware
@@ -41,7 +43,7 @@ const db = new sqlite3.Database('./teachers.db', (err) => {
   } else {
     console.log('Connected to the SQLite database.');
     db.run(`CREATE TABLE IF NOT EXISTS teachers (
-      id INTEGER PRIMARY KEY,
+      id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       className TEXT NOT NULL,
       department TEXT NOT NULL,

@@ -29,6 +29,18 @@ import {
   SheetClose
 } from "@/components/ui/sheet"
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 import { departmentKeys } from "./mainPage/data"
 
 interface Teacher {
@@ -57,6 +69,8 @@ export default function App() {
   const [selectedProfileDepartment, setSelectedProfileDepartment] = useState('');
   const [user, setUser] = useState<intfUser>({id: 0,name: "", className: "", department: "", subjects: "", newImage: "", oldImage: ""});
   const [sideOpen, setSideOpen] = useState(false);
+  const [alert, setAlert] = useState(false);
+
 
   const fetchTeachers = async () => {
     try {
@@ -93,7 +107,7 @@ export default function App() {
       console.log(resOauth.data);
       axios.get("http://localhost:3000/getteacher?id="+resOauth.data["id"])
       .then((res) => {
-        console.log("HIER DATEN:", res.data);
+        console.log("Server Daten:", res.data);
         if('id'in res.data){
           setUser(prevUser => ({
             ...prevUser,
@@ -108,7 +122,7 @@ export default function App() {
         }else{
           setUser(prevUser => ({
             ...prevUser,
-            name: resOauth.data["name"],
+            name: resOauth.data["displayName"],
             id: resOauth.data["id"]
           }));
         }
@@ -148,6 +162,14 @@ export default function App() {
   )
 
   const handleSave = async () => {
+    if (!user.id || !user.name || !user.className || !user.department || user.subjects.length === 0 || !(user.newImage || user.oldImage)) {
+      console.error('Missing required user information');
+      setAlert(true);
+      return;
+    }else{
+      setSideOpen(false);
+    }
+
     const formData = new FormData();
     formData.append('id', user.id.toString());
     formData.append('name', user.name);
@@ -198,7 +220,7 @@ export default function App() {
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input id="name" onChange={(e) => setUser(prevUser => ({ ...prevUser, name: e.target.value }))} value={user?.name ?? ''} placeholder="Name" className="col-span-3" />
+                  <Input id="name" readOnly={true} value={user?.name ?? ''} placeholder="Name" className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="class" className="text-right">
@@ -262,9 +284,7 @@ export default function App() {
                 </div>
               </div>
               <SheetFooter>
-                <SheetClose asChild onClick={handleSave}>
-                  <Button type="submit">Save</Button>
-                </SheetClose>
+                <Button onClick={handleSave} type="submit">Save</Button>
               </SheetFooter>
             </SheetContent>
           </Sheet>
@@ -328,6 +348,17 @@ export default function App() {
       </div>
 
       <Separator className="my-8 bg-gray-400" />
+      <AlertDialog open={alert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Bitte fülle alle Felder aus!</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setAlert(false)}>Cancel</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredTeachers.map(teacher => (
